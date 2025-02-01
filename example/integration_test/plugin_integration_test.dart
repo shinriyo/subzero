@@ -6,19 +6,19 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('Test copyWith and toJson methods', (WidgetTester tester) async {
-    // `Person`オブジェクトを作成
+    // Create Person object
     Person person = Person(name: 'Alice', age: 30);
 
-    // `copyWith`を使ってプロパティを変更
+    // Update properties using copyWith
     var updatedPerson = await person.copyWith({
       'name': 'Bob',
       'age': 35,
     });
 
-    // 更新された`Person`オブジェクトをJSONに変換
+    // Convert updated Person object to JSON
     var updatedJson = await updatedPerson.toJson();
 
-    // 更新された名前と年齢が正しく反映されているか確認
+    // Verify that name and age are updated correctly
     expect(updatedJson['name'], 'Bob');
     expect(updatedJson['age'], 35);
   });
