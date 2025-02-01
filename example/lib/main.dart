@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
                   // Create Person object
                   Person person = Person(name: 'Alice', age: 30);
 
-                  // copyWithを呼び出してプロパティを更新
+                  // Call copyWith to update properties
                   var updatedPerson = await person.copyWith({
                     'name': 'Bob',
                     'age': 35,
@@ -62,7 +62,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// Personクラスを定義
+// Define Person class
 class Person {
   final String name;
   final int age;
