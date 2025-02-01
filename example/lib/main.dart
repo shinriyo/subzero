@@ -1,11 +1,14 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:subzero/subzero.dart'; // プラグインをインポート
+import 'package:subzero/subzero.dart';
 
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -27,7 +30,9 @@ class MyApp extends StatelessWidget {
                   });
 
                   // 更新後のPersonオブジェクトを表示
-                  print("Updated Person: ${await updatedPerson.toJson()}");
+                  if (kDebugMode) {
+                    print("Updated Person: ${await updatedPerson.toJson()}");
+                  }
                   // => Updated Person: {name: Bob, age: 35}
                 },
                 child: Text('Run copyWith Example'),
@@ -42,7 +47,9 @@ class MyApp extends StatelessWidget {
                   var json = await person.toJson();
 
                   // JSONを表示
-                  print("Person as JSON: $json");
+                  if (kDebugMode) {
+                    print("Person as JSON: $json");
+                  }
                   // => Person as JSON: {name: Charlie, age: 40}
                 },
                 child: Text('Run toJson Example'),
