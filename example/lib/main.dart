@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
             children: [
               ElevatedButton(
                 onPressed: () async {
-                  // Personオブジェクトを作成
+                  // Create Person object
                   Person person = Person(name: 'Alice', age: 30);
 
                   // copyWithを呼び出してプロパティを更新
@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
                     'age': 35,
                   });
 
-                  // 更新後のPersonオブジェクトを表示
+                  // Display updated Person object
                   if (kDebugMode) {
                     print("Updated Person: ${await updatedPerson.toJson()}");
                   }
@@ -40,13 +40,13 @@ class MyApp extends StatelessWidget {
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () async {
-                  // Personオブジェクトを作成
+                  // Create Person object
                   Person person = Person(name: 'Charlie', age: 40);
 
-                  // toJsonを呼び出してJSONに変換
+                  // Convert to JSON using toJson
                   var json = await person.toJson();
 
-                  // JSONを表示
+                  // Display JSON
                   if (kDebugMode) {
                     print("Person as JSON: $json");
                   }
@@ -69,7 +69,7 @@ class Person {
 
   Person({required this.name, required this.age});
 
-  // copyWithメソッドをプラグイン経由で呼び出す
+  // Call copyWith method via plugin
   Future<Person> copyWith(Map<String, dynamic> properties) async {
     final result = await Subzero.copyWith('Person', properties);
     return Person(
@@ -78,7 +78,7 @@ class Person {
     );
   }
 
-  // toJsonメソッドをプラグイン経由で呼び出す
+  // Call toJson method via plugin
   Future<Map<String, dynamic>> toJson() async {
     return await Subzero.toJson('Person', {
       'name': name,
