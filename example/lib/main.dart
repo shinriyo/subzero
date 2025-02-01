@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:subzero/subzero.dart';
+import 'package:subzero/subzero_entity.dart';
 
 void main() {
   runApp(MyApp());
@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
 
                   // Display updated Person object
                   if (kDebugMode) {
-                    print("Updated Person: ${await updatedPerson.toJson()}");
+                    print("Updated Person: $updatedPerson");
                   }
                   // => Updated Person: {name: Bob, age: 35}
                 },
@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
                   if (kDebugMode) {
                     print("Person as JSON: $json");
                   }
-                  // => Person as JSON: {name: Charlie, age: 40}
+                  // => Person PersonFactory implements ModelFactory<Person> { PersonFactory implements ModelFactory<Person> { as JSON: {name: Charlie, age: 40}
                 },
                 child: Text('Run toJson Example'),
               ),
@@ -63,26 +63,12 @@ class MyApp extends StatelessWidget {
 }
 
 // Define Person class
-class Person {
+class Person with SubzeroEntity {
   final String name;
   final int age;
 
   Person({required this.name, required this.age});
 
-  // Call copyWith method via plugin
-  Future<Person> copyWith(Map<String, dynamic> properties) async {
-    final result = await Subzero.copyWith('Person', properties);
-    return Person(
-      name: result['name'],
-      age: result['age'],
-    );
-  }
-
-  // Call toJson method via plugin
-  Future<Map<String, dynamic>> toJson() async {
-    return await Subzero.toJson('Person', {
-      'name': name,
-      'age': age,
-    });
-  }
+  @override
+  String get className => 'Person';
 }

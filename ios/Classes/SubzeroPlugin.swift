@@ -21,18 +21,13 @@ public class SubzeroPlugin: NSObject, FlutterPlugin {
 
     private func handleCopyWithModel(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         guard let arguments = call.arguments as? [String: Any],
-              let className = arguments["className"] as? String,
               let properties = arguments["properties"] as? [String: Any] else {
             result(FlutterError(code: "INVALID_ARGUMENTS", message: "Invalid arguments", details: nil))
             return
         }
 
-        // ここでリフレクションを使ってプロパティを操作
-        var updatedProperties = properties
-        updatedProperties["name"] = "Updated \(properties["name"] ?? "")"
-        updatedProperties["age"] = (properties["age"] as? Int ?? 0) + 1
-
-        result(updatedProperties)
+        // プロパティをそのまま返す
+        result(properties)
     }
 
     private func handleToJson(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -42,7 +37,7 @@ public class SubzeroPlugin: NSObject, FlutterPlugin {
             return
         }
 
-        // プロパティをそのままJSONとして返す
+        // プロパティをそのまま返す
         result(properties)
     }
 }

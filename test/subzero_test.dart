@@ -1,29 +1,80 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:subzero/subzero.dart';
-import 'package:subzero/subzero_platform_interface.dart';
-import 'package:subzero/subzero_method_channel.dart';
-import 'package:plugin_platform_interface/plugin_platform_interface.dart';
-
-class MockSubzeroPlatform
-    with MockPlatformInterfaceMixin
-    implements SubzeroPlatform {
-
-  @override
-  Future<String?> getPlatformVersion() => Future.value('42');
-}
+import 'package:flutter/services.dart';
+import 'package:subzero/subzero_entiry.dart';
 
 void main() {
-  final SubzeroPlatform initialPlatform = SubzeroPlatform.instance;
+  TestWidgetsFlutterBinding.ensureInitialized();
 
-  test('$MethodChannelSubzero is the default instance', () {
-    expect(initialPlatform, isInstanceOf<MethodChannelSubzero>());
+  // Set up mock method channel
+  const channel = MethodChannel('com.shinriyo.subzero.reflection');
+  final log = <MethodCall>[];
+
+  setUp(() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+      channel,
+      (MethodCall methodCall) async {
+        log.add(methodCall);
+        // Mock responses based on method calls
+        switch (methodCall.method) {
+          case 'copyWithModel':
+            final args = methodCall.arguments as Map;
+            final props = args['properties'] as Map;
+            return {
+              ...props,
+              'name': props['name'] ?? 'default',
+              'age': props['age'] ?? 0,
+            };
+          case 'toJson':
+            return {'name': 'John', 'age': 30};
+          default:
+            return null;
+        }
+      },
+    );
   });
 
-  test('getPlatformVersion', () async {
-    Subzero subzeroPlugin = Subzero();
-    MockSubzeroPlatform fakePlatform = MockSubzeroPlatform();
-    SubzeroPlatform.instance = fakePlatform;
-
-    expect(await subzeroPlugin.getPlatformVersion(), '42');
+  tearDown(() {
+    log.clear();
   });
+
+  // Test copyWith functionality
+  test('copyWith should update properties correctly', () async {
+    final person = Person(name: 'John', age: 30);
+    final result = await person.copyWith<Person>({'name': 'Jane'});
+
+    // Verify method channel call
+    expect(log, hasLength(1));
+    expect(log.first.method, 'copyWithModel');
+
+    // Verify the returned properties
+    expect(result.name, 'Jane');
+    expect(result.age, 30);
+  });
+
+  // Test toJson functionality
+  test('toJson should return properties as map', () async {
+    final person = Person(name: 'John', age: 30);
+    final json = await person.toJson();
+
+    // Verify method channel call
+    expect(log, hasLength(1));
+    expect(log.first.method, 'toJson');
+
+    // Verify the returned map
+    expect(json, isA<Map<String, dynamic>>());
+    expect(json.containsKey('name'), true);
+    expect(json.containsKey('age'), true);
+  });
+}
+
+// Test Person class implementation
+class Person with SubzeroEntiry {
+  final String name;
+  final int age;
+
+  Person({required this.name, required this.age});
+
+  @override
+  String get className => 'Person';
 }
