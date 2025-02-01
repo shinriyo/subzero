@@ -7,7 +7,7 @@ A Flutter plugin for dynamic model manipulation using reflection.
                        DESC
   s.homepage         = 'http://example.com'
   s.license          = { :file => '../LICENSE' }
-  s.author           = { 'Your Company' => 'email@example.com' }
+  s.author           = { 'shinriyo' => 'shinriyo@gmail.com' }
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'  # ここでClassesディレクトリ内のファイルを指定
   s.public_header_files = 'Classes/**/*.h'
