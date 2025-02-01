@@ -1,63 +1,81 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
-
-import 'package:flutter/services.dart';
-import 'package:subzero/subzero.dart';
+import 'package:subzero/subzero.dart'; // プラグインをインポート
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
-class MyApp extends StatefulWidget {
-  const MyApp({super.key});
-
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
-  final _subzeroPlugin = Subzero();
-
-  @override
-  void initState() {
-    super.initState();
-    initPlatformState();
-  }
-
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    // We also handle the message potentially returning null.
-    try {
-      platformVersion =
-          await _subzeroPlugin.getPlatformVersion() ?? 'Unknown platform version';
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {
-      _platformVersion = platformVersion;
-    });
-  }
-
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Plugin example app'),
-        ),
+        appBar: AppBar(title: Text('Subzero Example')),
         body: Center(
-          child: Text('Running on: $_platformVersion\n'),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () async {
+                  // Personオブジェクトを作成
+                  Person person = Person(name: 'Alice', age: 30);
+
+                  // copyWithを呼び出してプロパティを更新
+                  var updatedPerson = await person.copyWith({
+                    'name': 'Bob',
+                    'age': 35,
+                  });
+
+                  // 更新後のPersonオブジェクトを表示
+                  print("Updated Person: ${await updatedPerson.toJson()}");
+                  // => Updated Person: {name: Bob, age: 35}
+                },
+                child: Text('Run copyWith Example'),
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () async {
+                  // Personオブジェクトを作成
+                  Person person = Person(name: 'Charlie', age: 40);
+
+                  // toJsonを呼び出してJSONに変換
+                  var json = await person.toJson();
+
+                  // JSONを表示
+                  print("Person as JSON: $json");
+                  // => Person as JSON: {name: Charlie, age: 40}
+                },
+                child: Text('Run toJson Example'),
+              ),
+            ],
+          ),
         ),
       ),
     );
+  }
+}
+
+// Personクラスを定義
+class Person {
+  final String name;
+  final int age;
+
+  Person({required this.name, required this.age});
+
+  // copyWithメソッドをプラグイン経由で呼び出す
+  Future<Person> copyWith(Map<String, dynamic> properties) async {
+    final result = await Subzero.copyWith('Person', properties);
+    return Person(
+      name: result['name'],
+      age: result['age'],
+    );
+  }
+
+  // toJsonメソッドをプラグイン経由で呼び出す
+  Future<Map<String, dynamic>> toJson() async {
+    return await Subzero.toJson('Person', {
+      'name': name,
+      'age': age,
+    });
   }
 }
