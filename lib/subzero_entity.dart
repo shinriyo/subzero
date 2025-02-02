@@ -1,4 +1,5 @@
 import 'package:flutter/services.dart';
+import 'package:subzero/annotations.dart';
 
 /// A mixin that provides reflection capabilities to a class.
 ///
@@ -16,43 +17,38 @@ import 'package:flutter/services.dart';
 /// }
 /// ```
 /// An annotation that defines class name and property list
-mixin SubzeroEntity {
+mixin SubzeroEntity<T> {
   static const MethodChannel _channel =
       MethodChannel('com.shinriyo.subzero.reflection');
 
-  /// Returns the current object state as a Map
+  /// Returns the metadata for this entity
   Map<String, dynamic> get currentState;
 
   Future<T> copyWith<T>(Map<String, dynamic> properties) async {
-    /// Get all current property values
-    final currentValues = currentState;
-
-    /// Create updated properties by merging current values with updates
-    final updatedProperties = {
-      /// Spread existing values
-      ...currentValues,
-
-      /// Override with update values
-      ...properties,
-    };
+    // Create a new map with current state
+    final updatedState = Map<String, dynamic>.from(currentState);
+    // Apply only the provided properties
+    updatedState.addAll(properties);
 
     final result = await _channel.invokeMethod('copyWithModel', {
-      /// Send all property values
-      'properties': updatedProperties,
-      'className': runtimeType.toString(),
+      'properties': updatedState,
+      'currentState': currentState,
     });
 
+    if (result is Map) {
+      return Map<String, dynamic>.from(result) as T;
+    }
     return result as T;
   }
 
-  Future<Map<String, dynamic>> toJson() async {
+  Future<T> toJson<T>() async {
     final result = await _channel.invokeMethod('toJson', {
-      'className': runtimeType.toString(),
-
-      /// Send current state
       'properties': currentState,
     });
 
-    return Map<String, dynamic>.from(result);
+    if (result is Map) {
+      return Map<String, dynamic>.from(result) as T;
+    }
+    return result as T;
   }
 }

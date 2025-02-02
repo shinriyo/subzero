@@ -1,5 +1,6 @@
 package com.shinriyo.subzero
 
+import android.util.Log
 import androidx.annotation.NonNull
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -28,15 +29,41 @@ class SubzeroPlugin: FlutterPlugin, MethodCallHandler {
         result.success(properties)
       }
       "toJson" -> {
-        result.success(mapOf(
-          "name" to "test",
-          "age" to 25
-        ))
+        result.success(toJson(call))
       }
       else -> {
         result.notImplemented()
       }
     }
+  }
+
+  private fun toJson(call: MethodCall): Map<String, Any?> {
+    // デバッグ出力を追加
+    Log.d("SubzeroPlugin", "toJson called with arguments: ${call.arguments}")
+    
+    // Get instance from arguments
+    val instance = call.argument<Any>("instance") ?: return emptyMap()
+    Log.d("SubzeroPlugin", "instance: $instance")
+    
+    // テスト用のハードコードされた値を探す
+    val clazz = instance::class.java
+    for (field in clazz.declaredFields) {
+        field.isAccessible = true
+        Log.d("SubzeroPlugin", "field: ${field.name}, value: ${field.get(instance)}")
+    }
+    
+    // Get current values from instance using reflection
+    val properties = instance::class.memberProperties
+    val json = mutableMapOf<String, Any?>()
+    
+    for (property in properties) {
+      val value = property.getter.call(instance)
+      json[property.name] = value
+      Log.d("SubzeroPlugin", "property: ${property.name}, value: $value")
+    }
+    
+    Log.d("SubzeroPlugin", "returning json: $json")
+    return json
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {

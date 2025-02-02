@@ -102,7 +102,7 @@ class _MyAppState extends State<MyApp> {
           children: [
             ElevatedButton(
               onPressed: () async {
-                // Create Person object
+                // Create Person object with matching values
                 Person person =
                     Person(name: 'Charlie', age: 40, isActive: true);
 
@@ -162,7 +162,7 @@ class _MyAppState extends State<MyApp> {
 }
 
 @Subzero.meta('Person', ['name', 'age', 'isActive'])
-class Person with SubzeroEntity {
+class Person with SubzeroEntity<Person> {
   final String name;
   final int age;
   final bool isActive;

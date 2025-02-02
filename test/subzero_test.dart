@@ -65,8 +65,14 @@ class TestPerson with SubzeroEntity {
   TestPerson({required this.name, required this.age});
 
   @override
+  Subzero get annotation => const Subzero.meta('Person', ['name', 'age']);
+
+  @override
   Map<String, dynamic> get currentState => {
         'name': name,
         'age': age,
       };
+
+  @override
+  List<String> get propertyList => ['name', 'age'];
 }
