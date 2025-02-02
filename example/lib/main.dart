@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:subzero/subzero_entity.dart';
+import 'package:subzero/annotations.dart';
 
 void main() {
   runApp(MyApp());
@@ -21,7 +22,8 @@ class MyApp extends StatelessWidget {
               ElevatedButton(
                 onPressed: () async {
                   // Create Person object
-                  Person person = Person(name: 'Alice', age: 30);
+                  Person person =
+                      Person(name: 'Alice', age: 30, isActive: true);
 
                   // Call copyWith to update properties
                   var updatedPerson = await person.copyWith({
@@ -41,7 +43,8 @@ class MyApp extends StatelessWidget {
               ElevatedButton(
                 onPressed: () async {
                   // Create Person object
-                  Person person = Person(name: 'Charlie', age: 40);
+                  Person person =
+                      Person(name: 'Charlie', age: 40, isActive: true);
 
                   // Convert to JSON using toJson
                   var json = await person.toJson();
@@ -62,13 +65,22 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// Define Person class
+@SubzeroClass('Person', ['name', 'age', 'isActive'])
 class Person with SubzeroEntity {
   final String name;
   final int age;
+  final bool isActive;
 
-  Person({required this.name, required this.age});
+  Person({
+    required this.name,
+    required this.age,
+    required this.isActive,
+  });
 
   @override
-  String get className => 'Person';
+  Map<String, dynamic> get currentState => {
+        'name': name,
+        'age': age,
+        'isActive': isActive,
+      };
 }

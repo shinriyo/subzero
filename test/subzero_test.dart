@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/services.dart';
-import 'package:subzero/subzero_entiry.dart';
+import 'package:subzero/annotations.dart';
+import 'package:subzero/subzero_entity.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  // Set up mock method channel
   const channel = MethodChannel('com.shinriyo.subzero.reflection');
   final log = <MethodCall>[];
 
@@ -15,18 +15,11 @@ void main() {
       channel,
       (MethodCall methodCall) async {
         log.add(methodCall);
-        // Mock responses based on method calls
         switch (methodCall.method) {
           case 'copyWithModel':
-            final args = methodCall.arguments as Map;
-            final props = args['properties'] as Map;
-            return {
-              ...props,
-              'name': props['name'] ?? 'default',
-              'age': props['age'] ?? 0,
-            };
+            return methodCall.arguments['properties'] as Map<String, dynamic>;
           case 'toJson':
-            return {'name': 'John', 'age': 30};
+            return <String, dynamic>{'name': 'test', 'age': 25};
           default:
             return null;
         }
@@ -38,43 +31,39 @@ void main() {
     log.clear();
   });
 
-  // Test copyWith functionality
-  test('copyWith should update properties correctly', () async {
-    final person = Person(name: 'John', age: 30);
-    final result = await person.copyWith<Person>({'name': 'Jane'});
+  test('copyWith sends correct data to platform channel', () async {
+    final person = TestPerson(name: 'Alice', age: 30);
+    final properties = <String, dynamic>{'name': 'Bob', 'age': 35};
 
-    // Verify method channel call
+    await person.copyWith(properties);
+
     expect(log, hasLength(1));
     expect(log.first.method, 'copyWithModel');
-
-    // Verify the returned properties
-    expect(result.name, 'Jane');
-    expect(result.age, 30);
+    expect(log.first.arguments['className'], 'Person');
+    expect(log.first.arguments['properties'], properties);
+    expect(log.first.arguments['propertyList'], ['name', 'age']);
   });
 
-  // Test toJson functionality
-  test('toJson should return properties as map', () async {
-    final person = Person(name: 'John', age: 30);
+  test('toJson sends correct data to platform channel', () async {
+    final person = TestPerson(name: 'Alice', age: 30);
+
     final json = await person.toJson();
 
-    // Verify method channel call
     expect(log, hasLength(1));
     expect(log.first.method, 'toJson');
-
-    // Verify the returned map
-    expect(json, isA<Map<String, dynamic>>());
-    expect(json.containsKey('name'), true);
-    expect(json.containsKey('age'), true);
+    expect(log.first.arguments['className'], 'Person');
+    expect(log.first.arguments['propertyList'], ['name', 'age']);
+    expect(json, <String, dynamic>{'name': 'test', 'age': 25});
   });
 }
 
-// Test Person class implementation
-class Person with SubzeroEntiry {
+@person
+class TestPerson with SubzeroEntity<TestPerson> {
   final String name;
   final int age;
 
-  Person({required this.name, required this.age});
+  TestPerson({required this.name, required this.age});
 
   @override
-  String get className => 'Person';
+  SubzeroClass get annotation => person;
 }

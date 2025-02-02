@@ -7,7 +7,7 @@ void main() {
 
   testWidgets('Test copyWith and toJson methods', (WidgetTester tester) async {
     // Create Person object
-    Person person = Person(name: 'Alice', age: 30);
+    Person person = Person(name: 'Alice', age: 30, isActive: true);
 
     // Update properties using copyWith
     var updatedPerson = await person.copyWith({

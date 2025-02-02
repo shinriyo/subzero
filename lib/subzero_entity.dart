@@ -7,27 +7,38 @@ import 'package:flutter/services.dart';
 ///
 /// Example usage:
 /// ```dart
+/// @SubzeroClass('Person')
 /// class Person with SubzeroEntity {
+///   @SubzeroProperty('name')
 ///   final String name;
+///
+///   @SubzeroProperty('age')
 ///   final int age;
 ///
 ///   Person({required this.name, required this.age});
-///
-///   @override
-///   String get className => 'Person';
 /// }
 /// ```
+/// クラス名とプロパティリストを定義するアノテーション
 mixin SubzeroEntity {
   static const MethodChannel _channel =
       MethodChannel('com.shinriyo.subzero.reflection');
 
-  /// Returns the class name (must be implemented)
-  String get className;
+  // 現在のオブジェクトの状態をMapとして返す
+  Map<String, dynamic> get currentState;
 
   Future<T> copyWith<T>(Map<String, dynamic> properties) async {
+    // 現在の全プロパティの値を取得
+    final currentValues = currentState;
+
+    // 更新したいプロパティで上書き
+    final updatedProperties = {
+      ...currentValues, // 既存の値を展開
+      ...properties, // 更新したい値で上書き
+    };
+
     final result = await _channel.invokeMethod('copyWithModel', {
-      'className': className,
-      'properties': properties,
+      'properties': updatedProperties, // 全プロパティの値を送信
+      'className': runtimeType.toString(),
     });
 
     return result as T;
@@ -35,8 +46,8 @@ mixin SubzeroEntity {
 
   Future<Map<String, dynamic>> toJson() async {
     final result = await _channel.invokeMethod('toJson', {
-      'className': className,
-      'properties': {}, // 空のMapを送信し、Swift側でリフレクションを使用
+      'className': runtimeType.toString(),
+      'properties': currentState, // 現在の状態を送信
     });
 
     return Map<String, dynamic>.from(result);
