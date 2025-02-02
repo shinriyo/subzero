@@ -7,37 +7,38 @@ import 'package:flutter/services.dart';
 ///
 /// Example usage:
 /// ```dart
-/// @SubzeroClass('Person')
+/// @SubzeroClass('Person', ['name', 'age'])
 /// class Person with SubzeroEntity {
-///   @SubzeroProperty('name')
 ///   final String name;
-///
-///   @SubzeroProperty('age')
 ///   final int age;
 ///
 ///   Person({required this.name, required this.age});
 /// }
 /// ```
-/// クラス名とプロパティリストを定義するアノテーション
+/// An annotation that defines class name and property list
 mixin SubzeroEntity {
   static const MethodChannel _channel =
       MethodChannel('com.shinriyo.subzero.reflection');
 
-  // 現在のオブジェクトの状態をMapとして返す
+  /// Returns the current object state as a Map
   Map<String, dynamic> get currentState;
 
   Future<T> copyWith<T>(Map<String, dynamic> properties) async {
-    // 現在の全プロパティの値を取得
+    /// Get all current property values
     final currentValues = currentState;
 
-    // 更新したいプロパティで上書き
+    /// Create updated properties by merging current values with updates
     final updatedProperties = {
-      ...currentValues, // 既存の値を展開
-      ...properties, // 更新したい値で上書き
+      /// Spread existing values
+      ...currentValues,
+
+      /// Override with update values
+      ...properties,
     };
 
     final result = await _channel.invokeMethod('copyWithModel', {
-      'properties': updatedProperties, // 全プロパティの値を送信
+      /// Send all property values
+      'properties': updatedProperties,
       'className': runtimeType.toString(),
     });
 
@@ -47,7 +48,9 @@ mixin SubzeroEntity {
   Future<Map<String, dynamic>> toJson() async {
     final result = await _channel.invokeMethod('toJson', {
       'className': runtimeType.toString(),
-      'properties': currentState, // 現在の状態を送信
+
+      /// Send current state
+      'properties': currentState,
     });
 
     return Map<String, dynamic>.from(result);

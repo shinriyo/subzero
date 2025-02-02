@@ -1,4 +1,4 @@
-/// クラス名とプロパティリストを定義するアノテーション
+/// Annotation to define class name and property list
 class SubzeroClass {
   final String name;
   final List<String> properties;
