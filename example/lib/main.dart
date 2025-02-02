@@ -17,55 +17,142 @@ class _MyAppState extends State<MyApp> {
   String _copyWithResult = '';
   String _jsonResult = '';
 
+  Widget _buildCopyWithExample() {
+    return Column(
+      children: [
+        // Title
+        const Text(
+          'copyWith',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 10),
+        // Original Person object
+        const Text(
+          'Original: Person(name: Alice, age: 30, isActive: true)',
+          style: TextStyle(fontSize: 16),
+        ),
+        const SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () async {
+                // Create Person object
+                Person person = Person(name: 'Alice', age: 30, isActive: true);
+
+                // Call copyWith to update properties
+                var updatedPerson = await person.copyWith({
+                  'name': 'Bob',
+                  'age': 35,
+                });
+
+                // Display updated Person object
+                setState(() {
+                  _copyWithResult = "Updated Person: $updatedPerson";
+                });
+              },
+              child: const Text(
+                'Run',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            const SizedBox(width: 10),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  _copyWithResult = '';
+                });
+              },
+              child: const Text(
+                'Reset',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Text(_copyWithResult, style: const TextStyle(fontSize: 16)),
+      ],
+    );
+  }
+
+  Widget _buildToJsonExample() {
+    return Column(
+      children: [
+        // Title
+        const Text(
+          'toJson',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 10),
+        // Original Person object
+        const Text(
+          'Original: Person(name: Charlie, age: 40, isActive: true)',
+          style: TextStyle(fontSize: 16),
+        ),
+        const SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () async {
+                // Create Person object
+                Person person =
+                    Person(name: 'Charlie', age: 40, isActive: true);
+
+                // Convert to JSON using toJson
+                var json = await person.toJson();
+
+                // Display JSON
+                setState(() {
+                  _jsonResult = "Person as JSON: $json";
+                });
+              },
+              child: const Text(
+                'Run',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            const SizedBox(width: 10),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  _jsonResult = '';
+                });
+              },
+              child: const Text(
+                'Reset',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Text(_jsonResult, style: const TextStyle(fontSize: 16)),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(title: const Text('Subzero Example')),
+        appBar: AppBar(
+          title: const Text('Subzero Example'),
+        ),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ElevatedButton(
-                onPressed: () async {
-                  // Create Person object
-                  Person person =
-                      Person(name: 'Alice', age: 30, isActive: true);
-
-                  // Call copyWith to update properties
-                  var updatedPerson = await person.copyWith({
-                    'name': 'Bob',
-                    'age': 35,
-                  });
-
-                  // Display updated Person object
-                  setState(() {
-                    _copyWithResult = "Updated Person: $updatedPerson";
-                  });
-                },
-                child: const Text('Run copyWith Example'),
-              ),
-              const SizedBox(height: 10),
-              Text(_copyWithResult, style: const TextStyle(fontSize: 16)),
+              _buildCopyWithExample(),
               const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () async {
-                  // Create Person object
-                  Person person =
-                      Person(name: 'Charlie', age: 40, isActive: true);
-
-                  // Convert to JSON using toJson
-                  var json = await person.toJson();
-
-                  // Display JSON
-                  setState(() {
-                    _jsonResult = "Person as JSON: $json";
-                  });
-                },
-                child: const Text('Run toJson Example'),
-              ),
-              const SizedBox(height: 10),
-              Text(_jsonResult, style: const TextStyle(fontSize: 16)),
+              _buildToJsonExample(),
             ],
           ),
         ),
