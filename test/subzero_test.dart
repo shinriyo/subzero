@@ -57,13 +57,16 @@ void main() {
   });
 }
 
-@person
-class TestPerson with SubzeroEntity<TestPerson> {
+@Subzero.meta('Person', ['name', 'age'])
+class TestPerson with SubzeroEntity {
   final String name;
   final int age;
 
   TestPerson({required this.name, required this.age});
 
   @override
-  SubzeroClass get annotation => person;
+  Map<String, dynamic> get currentState => {
+        'name': name,
+        'age': age,
+      };
 }

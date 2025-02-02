@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 ///
 /// Example usage:
 /// ```dart
-/// @SubzeroClass('Person', ['name', 'age'])
+/// @Subzero.meta('Person', ['name', 'age'])
 /// class Person with SubzeroEntity {
 ///   final String name;
 ///   final int age;

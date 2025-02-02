@@ -65,7 +65,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-@SubzeroClass('Person', ['name', 'age', 'isActive'])
+@Subzero.meta('Person', ['name', 'age', 'isActive'])
 class Person with SubzeroEntity {
   final String name;
   final int age;

@@ -2,7 +2,7 @@
 /// Used to provide metadata for reflection purposes.
 /// Example usage:
 /// ```dart
-/// @SubzeroClass('Person', ['name', 'age'])
+/// @Subzero.meta('Person', ['name', 'age'])
 /// class Person with SubzeroEntity {
 ///   final String name;
 ///   final int age;
@@ -10,8 +10,16 @@
 ///   Person({required this.name, required this.age});
 /// }
 /// ```
-class SubzeroClass {
+/// Subzero annotations for reflection metadata
+class Subzero {
+  /// Defines class name and property list for reflection
+  const factory Subzero.meta(String name, List<String> properties) =
+      SubzeroMeta;
+}
+
+/// Implementation class for @Subzero.meta annotation
+class SubzeroMeta implements Subzero {
   final String name;
   final List<String> properties;
-  const SubzeroClass(this.name, this.properties);
+  const SubzeroMeta(this.name, this.properties);
 }
