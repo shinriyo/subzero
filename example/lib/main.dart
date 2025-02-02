@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:subzero/subzero_entity.dart';
-import 'package:subzero/annotations.dart';
 
 void main() {
   runApp(MyApp());
@@ -108,7 +107,7 @@ class _MyAppState extends State<MyApp> {
 
                 // Convert to JSON using toJson
                 var json = await person.toJson();
-
+                print(json);
                 // Display JSON
                 setState(() {
                   _jsonResult = "Person as JSON: $json";
@@ -161,22 +160,17 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-@Subzero.meta('Person', ['name', 'age', 'isActive'])
-class Person with SubzeroEntity<Person> {
+class Person with SubzeroEntity {
   final String name;
   final int age;
   final bool isActive;
 
-  Person({
-    required this.name,
-    required this.age,
-    required this.isActive,
-  });
+  Person({required this.name, required this.age, required this.isActive});
 
   @override
-  Map<String, dynamic> get currentState => {
-        'name': name,
-        'age': age,
-        'isActive': isActive,
+  Map<String, Type> get fields => {
+        'name': String,
+        'age': int,
+        'isActive': bool,
       };
 }

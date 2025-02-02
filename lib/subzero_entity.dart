@@ -1,5 +1,4 @@
 import 'package:flutter/services.dart';
-import 'package:subzero/annotations.dart';
 
 /// A mixin that provides reflection capabilities to a class.
 ///
@@ -17,38 +16,65 @@ import 'package:subzero/annotations.dart';
 /// }
 /// ```
 /// An annotation that defines class name and property list
-mixin SubzeroEntity<T> {
+mixin SubzeroEntity {
   static const MethodChannel _channel =
       MethodChannel('com.shinriyo.subzero.reflection');
 
-  /// Returns the metadata for this entity
-  Map<String, dynamic> get currentState;
+  Map<String, Type> get fields;
+  // dynamic getField(String fieldName); // 抽象メソッドとして定義
+
+  Map<String, dynamic> toMap() {
+    final instance = this as dynamic;
+    final result = <String, dynamic>{};
+
+    for (var key in fields.keys) {
+      switch (key) {
+        case 'name':
+          result[key] = instance.name;
+        case 'age':
+          result[key] = instance.age;
+        case 'isActive':
+          result[key] = instance.isActive;
+      }
+    }
+
+    return result;
+  }
 
   Future<T> copyWith<T>(Map<String, dynamic> properties) async {
-    // Create a new map with current state
-    final updatedState = Map<String, dynamic>.from(currentState);
-    // Apply only the provided properties
-    updatedState.addAll(properties);
+    print('Sending data to native:');
+    print('Type: ${runtimeType.toString()}');
+    print('Properties: $properties');
+    print('Fields: ${fields}');
 
-    final result = await _channel.invokeMethod('copyWithModel', {
-      'properties': updatedState,
-      'currentState': currentState,
-    });
+    try {
+      final current = toMap();
+      final merged = Map<String, dynamic>.from(current)..addAll(properties);
 
-    if (result is Map) {
-      return Map<String, dynamic>.from(result) as T;
+      final result = await _channel.invokeMethod('copyWithModel', {
+        'data': merged,
+        'type': runtimeType.toString(),
+        'fields': fields.map((key, value) => MapEntry(key, value.toString())),
+      });
+
+      print('Received result: $result');
+
+      if (result is Map) {
+        return Map<String, dynamic>.from(result) as T;
+      }
+      return result as T;
+    } catch (e) {
+      print('Error in copyWith: $e');
+      rethrow;
     }
-    return result as T;
   }
 
   Future<T> toJson<T>() async {
-    final result = await _channel.invokeMethod('toJson', {
-      'properties': currentState,
-    });
-
-    if (result is Map) {
-      return Map<String, dynamic>.from(result) as T;
+    try {
+      return toMap() as T;
+    } catch (e) {
+      print('Error in toJson: $e');
+      rethrow;
     }
-    return result as T;
   }
 }
