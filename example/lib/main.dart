@@ -107,7 +107,6 @@ class _MyAppState extends State<MyApp> {
 
                 // Convert to JSON using toJson
                 var json = await person.toJson();
-                print(json);
                 // Display JSON
                 setState(() {
                   _jsonResult = "Person as JSON: $json";

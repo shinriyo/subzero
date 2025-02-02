@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 /// A mixin that provides reflection capabilities to a class.
@@ -53,10 +54,12 @@ mixin SubzeroEntity {
   }
 
   Future<T> copyWith<T>(Map<String, dynamic> properties) async {
-    print('Sending data to native:');
-    print('Type: ${runtimeType.toString()}');
-    print('Properties: $properties');
-    print('Fields: ${fields}');
+    if (kDebugMode) {
+      print('Sending data to native:');
+      print('Type: ${runtimeType.toString()}');
+      print('Properties: $properties');
+      print('Fields: $fields');
+    }
 
     try {
       final current = toMap();
@@ -68,14 +71,18 @@ mixin SubzeroEntity {
         'fields': fields.map((key, value) => MapEntry(key, value.toString())),
       });
 
-      print('Received result: $result');
+      if (kDebugMode) {
+        print('Received result: $result');
+      }
 
       if (result is Map) {
         return Map<String, dynamic>.from(result) as T;
       }
       return result as T;
     } catch (e) {
-      print('Error in copyWith: $e');
+      if (kDebugMode) {
+        print('Error in copyWith: $e');
+      }
       rethrow;
     }
   }
@@ -84,7 +91,9 @@ mixin SubzeroEntity {
     try {
       return toMap() as T;
     } catch (e) {
-      print('Error in toJson: $e');
+      if (kDebugMode) {
+        print('Error in toJson: $e');
+      }
       rethrow;
     }
   }

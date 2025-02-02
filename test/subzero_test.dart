@@ -1,6 +1,5 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/services.dart';
-import 'package:subzero/annotations.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:subzero/subzero_entity.dart';
 
 void main() {
@@ -57,7 +56,6 @@ void main() {
   });
 }
 
-@Subzero.meta('Person', ['name', 'age'])
 class TestPerson with SubzeroEntity {
   final String name;
   final int age;
