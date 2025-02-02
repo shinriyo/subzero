@@ -2,8 +2,9 @@ package com.shinriyo.subzero
 
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
-import kotlin.test.Test
-import org.mockito.Mockito
+import org.junit.Before
+import org.junit.Test
+import org.mockito.Mockito.*
 
 /*
  * This demonstrates a simple unit test of the Kotlin portion of this plugin's implementation.
@@ -13,15 +14,52 @@ import org.mockito.Mockito
  * you can run them directly from IDEs that support JUnit such as Android Studio.
  */
 
-internal class SubzeroPluginTest {
-  @Test
-  fun onMethodCall_getPlatformVersion_returnsExpectedValue() {
-    val plugin = SubzeroPlugin()
+class SubzeroPluginTest {
+    private lateinit var plugin: SubzeroPlugin
+    private lateinit var channel: MethodChannel.Result
 
-    val call = MethodCall("getPlatformVersion", null)
-    val mockResult: MethodChannel.Result = Mockito.mock(MethodChannel.Result::class.java)
-    plugin.onMethodCall(call, mockResult)
+    @Before
+    fun setUp() {
+        plugin = SubzeroPlugin()
+        channel = mock(MethodChannel.Result::class.java)
+    }
 
-    Mockito.verify(mockResult).success("Android " + android.os.Build.VERSION.RELEASE)
-  }
+    @Test
+    fun `copyWithModel sends correct data`() {
+        val properties = mapOf(
+            "name" to "Bob",
+            "age" to 35
+        )
+        val arguments = mapOf(
+            "className" to "Person",
+            "properties" to properties,
+            "propertyList" to listOf("name", "age")
+        )
+
+        plugin.onMethodCall(
+            MethodCall("copyWithModel", arguments),
+            channel
+        )
+
+        verify(channel).success(properties)
+    }
+
+    @Test
+    fun `toJson sends correct data`() {
+        val arguments = mapOf(
+            "className" to "Person",
+            "propertyList" to listOf("name", "age")
+        )
+        val expectedJson = mapOf(
+            "name" to "test",
+            "age" to 25
+        )
+
+        plugin.onMethodCall(
+            MethodCall("toJson", arguments),
+            channel
+        )
+
+        verify(channel).success(expectedJson)
+    }
 }
