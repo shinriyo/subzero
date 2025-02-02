@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:subzero/subzero_entity.dart';
 import 'package:subzero/annotations.dart';
@@ -7,14 +6,22 @@ void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  String _copyWithResult = '';
+  String _jsonResult = '';
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(title: Text('Subzero Example')),
+        appBar: AppBar(title: const Text('Subzero Example')),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -32,14 +39,15 @@ class MyApp extends StatelessWidget {
                   });
 
                   // Display updated Person object
-                  if (kDebugMode) {
-                    print("Updated Person: $updatedPerson");
-                  }
-                  // => Updated Person: {name: Bob, age: 35}
+                  setState(() {
+                    _copyWithResult = "Updated Person: $updatedPerson";
+                  });
                 },
-                child: Text('Run copyWith Example'),
+                child: const Text('Run copyWith Example'),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 10),
+              Text(_copyWithResult, style: const TextStyle(fontSize: 16)),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () async {
                   // Create Person object
@@ -50,13 +58,14 @@ class MyApp extends StatelessWidget {
                   var json = await person.toJson();
 
                   // Display JSON
-                  if (kDebugMode) {
-                    print("Person as JSON: $json");
-                  }
-                  // => Person PersonFactory implements ModelFactory<Person> { PersonFactory implements ModelFactory<Person> { as JSON: {name: Charlie, age: 40}
+                  setState(() {
+                    _jsonResult = "Person as JSON: $json";
+                  });
                 },
-                child: Text('Run toJson Example'),
+                child: const Text('Run toJson Example'),
               ),
+              const SizedBox(height: 10),
+              Text(_jsonResult, style: const TextStyle(fontSize: 16)),
             ],
           ),
         ),
