@@ -7,15 +7,26 @@ import 'package:flutter/services.dart';
 ///
 /// Example usage:
 /// ```dart
-/// @Subzero.meta('Person', ['name', 'age'])
 /// class Person with SubzeroEntity {
 ///   final String name;
 ///   final int age;
+///   final bool isActive;
 ///
-///   Person({required this.name, required this.age});
+///   Person({
+///     required this.name,
+///     required this.age,
+///     this.isActive = false,
+///   });
+///
+///   @override
+///   Map<String, Type> get fields => {
+///     'name': String,
+///     'age': int,
+///     'isActive': bool,
+///   };
 /// }
 /// ```
-/// An annotation that defines class name and property list
+/// Implement the [fields] getter to provide property information at runtime.
 mixin SubzeroEntity {
   static const MethodChannel _channel =
       MethodChannel('com.shinriyo.subzero.reflection');

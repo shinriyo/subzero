@@ -23,10 +23,10 @@ public class SubzeroPlugin: NSObject, FlutterPlugin {
       print("Type string: \(type)")
       print("Received data: \(data)")
       
-      // 現在のデータを保持
+      // Keep the current data
       var updatedData = data
       
-      // アノテーション情報を解析
+      // Parse annotation information
       let pattern = #"@Subzero\((.*?)\)"#
       if let regex = try? NSRegularExpression(pattern: pattern, options: []),
          let match = regex.firstMatch(in: type, options: [], range: NSRange(type.startIndex..<type.endIndex, in: type)),
@@ -35,7 +35,7 @@ public class SubzeroPlugin: NSObject, FlutterPlugin {
         let annotation = String(type[annotationRange])
         print("Found annotation: \(annotation)")
         
-        // アノテーションからプロパティ情報を取得
+        // Retrieve property information from annotation
         let propertyPattern = #"\{([^}]+)\}"#
         if let propRegex = try? NSRegularExpression(pattern: propertyPattern, options: []),
            let propMatch = propRegex.firstMatch(in: annotation, options: [], range: NSRange(annotation.startIndex..<annotation.endIndex, in: annotation)),
@@ -47,7 +47,7 @@ public class SubzeroPlugin: NSObject, FlutterPlugin {
           
           print("Found properties: \(properties)")
           
-          // 各プロパティに対して処理
+          // Process each property
           for prop in properties {
             let parts = prop.components(separatedBy: ":")
             if parts.count == 2 {
