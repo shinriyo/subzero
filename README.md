@@ -1,13 +1,21 @@
-# subzero
+# Subzero
 
-A new Flutter plugin project.
+A Flutter plugin that provides reflection capabilities for Dart classes. Supports copyWith and toJson functionality with native platform implementations.
+
+## Features
+
+- Runtime property type information
+- Automatic copyWith implementation
+- Platform-specific native code support (iOS and Android)
 
 ## Getting Started
 
-This project is a starting point for a Flutter
-[plug-in package](https://flutter.dev/to/develop-plugins),
-a specialized package that includes platform-specific implementation code for
-Android and/or iOS.
+Add this to your package's `pubspec.yaml` file:
+
+```yaml
+dependencies:
+  subzero: ^0.0.1
+```
 
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev), which offers tutorials,
