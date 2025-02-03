@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:subzero/subzero_entity.dart';
+import 'package:subzero/subzero.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:subzero/subzero_entity.dart';
+import 'package:subzero/subzero.dart';
 
 void main() {
   runApp(MyApp());
