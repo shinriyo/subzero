@@ -63,8 +63,8 @@ class TestPerson with SubzeroEntity {
   TestPerson({required this.name, required this.age});
 
   @override
-  Map<String, Type> get fields => {
-        'name': String,
-        'age': int,
+  Map<String, ({dynamic value, Type type})> get properties => {
+        'name': (value: name, type: String),
+        'age': (value: age, type: int),
       };
 }

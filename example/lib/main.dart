@@ -164,12 +164,16 @@ class Person with SubzeroEntity {
   final int age;
   final bool isActive;
 
-  Person({required this.name, required this.age, required this.isActive});
+  Person({
+    required this.name,
+    required this.age,
+    this.isActive = false,
+  });
 
   @override
-  Map<String, Type> get fields => {
-        'name': String,
-        'age': int,
-        'isActive': bool,
+  Map<String, ({dynamic value, Type type})> get properties => {
+        'name': (value: name, type: String),
+        'age': (value: age, type: int),
+        'isActive': (value: isActive, type: bool),
       };
 }
