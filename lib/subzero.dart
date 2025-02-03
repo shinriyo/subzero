@@ -1,9 +1,6 @@
 import 'package:flutter/services.dart';
 
-/// A mixin that provides reflection capabilities to a class.
-///
-/// This mixin adds [copyWith] and [toJson] functionality using platform channels
-/// to communicate with native code.
+/// A mixin that provides reflection-like capabilities for Dart classes.
 ///
 /// Example usage:
 /// ```dart
@@ -19,14 +16,23 @@ import 'package:flutter/services.dart';
 ///   });
 ///
 ///   @override
-///   Map<String, Type> get fields => {
-///     'name': String,
-///     'age': int,
-///     'isActive': bool,
+///   Map<String, ({dynamic value, Type type})> get properties => {
+///     'name': (value: name, type: String),
+///     'age': (value: age, type: int),
+///     'isActive': (value: isActive, type: bool),
 ///   };
 /// }
+///
+/// // Usage:
+/// final person = Person(name: 'Bob', age: 35);
+/// final updatedPerson = await person.copyWith({
+///   'name': 'Alice',
+///   'age': 25,
+/// });
 /// ```
-/// Implement the [fields] getter to provide property information at runtime.
+///
+/// The [properties] getter should return a map containing both the current values
+/// and their types for each property of your class.
 mixin SubzeroEntity {
   static const MethodChannel _channel =
       MethodChannel('com.shinriyo.subzero.reflection');
