@@ -25,45 +25,52 @@ class SubzeroPlugin: FlutterPlugin, MethodCallHandler {
   override fun onMethodCall(call: MethodCall, result: Result) {
     when (call.method) {
       "copyWithModel" -> {
-        val properties = call.argument<Map<String, Any>>("properties")
-        result.success(properties)
+        try {
+          val data = call.argument<Map<String, Any>>("data")
+          val type = call.argument<String>("type")
+          val fields = call.argument<Map<String, String>>("fields")
+
+          if (data == null || type == null || fields == null) {
+            result.error("INVALID_ARGUMENTS", "Missing required arguments", null)
+            return
+          }
+
+          // Keep current data
+          val updatedData = data.toMutableMap()
+
+          // Process each property from fields
+          fields.forEach { (name, type) ->
+            if (!updatedData.containsKey(name)) {
+              updatedData[name] = when (type.toLowerCase()) {
+                "string" -> ""
+                "int" -> 0
+                "bool", "boolean" -> false
+                else -> Any()
+              } as Any
+            }
+          }
+
+          result.success(updatedData)
+        } catch (e: Exception) {
+          result.error("ERROR", e.message, null)
+        }
       }
       "toJson" -> {
-        result.success(toJson(call))
+        try {
+          val args = call.arguments<Map<String, Any>>()
+          if (args == null) {
+            result.error("INVALID_ARGUMENTS", "Arguments must be a map", null)
+            return
+          }
+          result.success(args)
+        } catch (e: Exception) {
+          result.error("ERROR", e.message, null)
+        }
       }
       else -> {
         result.notImplemented()
       }
     }
-  }
-
-  private fun toJson(call: MethodCall): Map<String, Any?> {
-    // デバッグ出力を追加
-    Log.d("SubzeroPlugin", "toJson called with arguments: ${call.arguments}")
-    
-    // Get instance from arguments
-    val instance = call.argument<Any>("instance") ?: return emptyMap()
-    Log.d("SubzeroPlugin", "instance: $instance")
-    
-    // テスト用のハードコードされた値を探す
-    val clazz = instance::class.java
-    for (field in clazz.declaredFields) {
-        field.isAccessible = true
-        Log.d("SubzeroPlugin", "field: ${field.name}, value: ${field.get(instance)}")
-    }
-    
-    // Get current values from instance using reflection
-    val properties = instance::class.memberProperties
-    val json = mutableMapOf<String, Any?>()
-    
-    for (property in properties) {
-      val value = property.getter.call(instance)
-      json[property.name] = value
-      Log.d("SubzeroPlugin", "property: ${property.name}, value: $value")
-    }
-    
-    Log.d("SubzeroPlugin", "returning json: $json")
-    return json
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
