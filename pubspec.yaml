@@ -1,16 +1,17 @@
 name: subzero
-description: "A new Flutter plugin project."
+description: A Flutter plugin that provides reflection capabilities for Dart classes. 
+  Supports copyWith and toJson functionality with native platform implementations.
 version: 0.0.1
 homepage: https://github.com/shinriyo/subzero
 
 environment:
-  sdk: ^3.6.1
-  flutter: '>=3.3.0'
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: ">=3.3.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  plugin_platform_interface: ^2.0.2
+  plugin_platform_interface: ^2.1.8
 
 dev_dependencies:
   flutter_test:
