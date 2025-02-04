@@ -28,35 +28,46 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
         const SizedBox(height: 10),
-        // Original Person object
+        // Original Person object with Address
         const Text(
-          'Original: Person(name: Alice, age: 30, isActive: true)',
+          'Original: Person(name: Charlie, age: 40, address: Address(street: "123 Main St", city: "Boston"))',
           style: TextStyle(fontSize: 16),
         ),
         const SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            const SizedBox(width: 10),
             ElevatedButton(
               onPressed: () async {
-                // Create Person object
-                Person person = Person(name: 'Alice', age: 30, isActive: true);
+                // Create initial Person object
+                final address = Address(
+                  street: '123 Main St',
+                  city: 'Boston',
+                );
+                final person = Person(
+                  name: 'Charlie',
+                  age: 40,
+                  address: address,
+                );
 
-                // Call copyWith to update properties
-                var updatedPerson = await person.copyWith({
+                // Create new Address for update
+                final newAddress = Address(
+                  street: '456 Oak St',
+                  city: 'New York',
+                );
+
+                // Update using copyWith
+                var updated = await person.copyWith({
                   'name': 'Bob',
                   'age': 35,
+                  'address': newAddress,
                 });
-
-                // Display updated Person object
                 setState(() {
-                  _copyWithResult = "Updated Person: $updatedPerson";
+                  _copyWithResult = "Updated Person: $updated";
                 });
               },
-              child: const Text(
-                'Run',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
+              child: const Text('Run'),
             ),
             const SizedBox(width: 10),
             ElevatedButton(
@@ -65,10 +76,7 @@ class _MyAppState extends State<MyApp> {
                   _copyWithResult = '';
                 });
               },
-              child: const Text(
-                'Reset',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
+              child: const Text('Reset'),
             ),
           ],
         ),
@@ -92,7 +100,7 @@ class _MyAppState extends State<MyApp> {
         const SizedBox(height: 10),
         // Original Person object
         const Text(
-          'Original: Person(name: Charlie, age: 40, isActive: true)',
+          'Original: Person(name: Charlie, age: 40, address: Address(street: "123 Main St", city: "Boston"))',
           style: TextStyle(fontSize: 16),
         ),
         const SizedBox(height: 10),
@@ -101,9 +109,16 @@ class _MyAppState extends State<MyApp> {
           children: [
             ElevatedButton(
               onPressed: () async {
-                // Create Person object with matching values
-                Person person =
-                    Person(name: 'Charlie', age: 40, isActive: true);
+                // Create Address and Person objects
+                final address = Address(
+                  street: '123 Main St',
+                  city: 'Boston',
+                );
+                final person = Person(
+                  name: 'Charlie',
+                  age: 40,
+                  address: address,
+                );
 
                 // Convert to JSON using toJson
                 var json = await person.toJson();
@@ -159,21 +174,37 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
+class Address with SubzeroEntity {
+  final String street;
+  final String city;
+
+  Address({
+    required this.street,
+    required this.city,
+  });
+
+  @override
+  Map<String, ({dynamic value, Type type})> get properties => {
+        'street': (value: street, type: String),
+        'city': (value: city, type: String),
+      };
+}
+
 class Person with SubzeroEntity {
   final String name;
   final int age;
-  final bool isActive;
+  final Address address; // Class that implements SubzeroEntity
 
   Person({
     required this.name,
     required this.age,
-    this.isActive = false,
+    required this.address,
   });
 
   @override
   Map<String, ({dynamic value, Type type})> get properties => {
         'name': (value: name, type: String),
         'age': (value: age, type: int),
-        'isActive': (value: isActive, type: bool),
+        'address': (value: address, type: Address),
       };
 }
