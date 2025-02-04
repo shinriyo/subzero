@@ -1,3 +1,19 @@
+## 0.0.3
+
+### Features
+- Added support for nested structures in data serialization
+  - Now properly handles nested `SubzeroEntity` objects
+  - Supports complex object hierarchies (e.g., Person with Address)
+  - Improved serialization of custom classes
+
+### Improvements
+- Enhanced error handling by replacing print statements with proper error handling
+- Cleaned up code documentation
+- Improved type safety in serialization process
+
+### Breaking Changes
+None
+
 ## 0.0.2
 
 * 🔧 Breaking Changes:
